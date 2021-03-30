@@ -17,6 +17,7 @@ public class verificar {
     }
     
 
+    //Verifica que sea par el numero de parentesis
     public boolean verif1()
     {
         String cod = "";

@@ -1,3 +1,6 @@
+import java.util.Arrays;
+import java.util.List;
+
 public class Funciones {
 
     public Funciones(){
@@ -68,17 +71,26 @@ public class Funciones {
         *@return void
     */
 
-    public void setQ (String codigo){
-        String[] letras = codigo.split("");
-        String ver = (letras[1] + letras[2] + letras[3] + letras [4]);
-        if(ver.equals("SETQ") || ver.equals("SETQ")){
-            System.out.println("Declaracion de SETQ valida");
-            return codigo;
-        }
-        else{
-            System.out.println("SETQ no valida");
-            return codigo;
-        }
+    public void setQ (String[] codigo){
+        List<String> convertido = Arrays.asList(codigo);
+        int size = codigo.length;
+            if(convertido.contains("setq")){
+                System.out.println("Declaracion de SETQ valida");
+                String variable = codigo [2];
+                List<String> valor = new ArrayList<>();  
+                for (int i = 0; i < size-1; i++) {
+                    String  = canciones.get(x);
+                    System.out.println(cancion);
+                  }
+                String valor = codigo[3]
+               
+                
+            
+            }
+            else{
+                System.out.println("SETQ no valida");
+            
+            }
         
     }
 }

@@ -16,6 +16,8 @@ public class main{
         if (verificar.verif1()) 
             {
                 System.out.println("The expression is balanced");
+                Parser parse = new Parser();
+                System.out.println(parse.separateString(codigo));
             } 
                 
             else 
@@ -23,4 +25,4 @@ public class main{
                 System.out.println("The expression is not balanced");
             }
     }
-} 
+}
