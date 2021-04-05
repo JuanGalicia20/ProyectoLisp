@@ -2,10 +2,10 @@ import java.util.*;
 
 public class Funciones {
 
-    //atributos
-    private LinkedHashMap <String, ArrayList<String>> listadoVariables;
 
-    //Constructor
+    private LinkedHashMap <String, ArrayList<String>> listadoVariables;
+    Verificar verificar = new Verificar();
+
     public Funciones(){
         listadoVariables = new LinkedHashMap<>();
         ArrayList<String> prvalue1 = new ArrayList<>();
@@ -20,11 +20,7 @@ public class Funciones {
         return listadoVariables;
     }
 
-    /**
-     * Metodo quote
-     * @param ArrayList<ArrayList<String>> codigo
-     * @return String
-    */
+   
     public String quote (ArrayList<ArrayList<String>> codigo){
         String finalString="( ";
         ArrayList<String> newList = new ArrayList<String>();
@@ -52,7 +48,7 @@ public class Funciones {
             for(int i=0;i<codigo.size();i++){
                 for(int j = 0; j< (codigo.get(i).size());j++)
                 {
-                    newList.add(codigo.get(i).get(j)); //crea un array para conservar resultado    
+                    newList.add(codigo.get(i).get(j));  
                 }
             }
 
@@ -86,23 +82,18 @@ public class Funciones {
             newList.add("No es quote");
         }
 
+        System.out.println("QUOTE: "+finalString);
         return finalString;        
     
     }
 
 
-    /** 
-     * Metodo listLisp 
-     * @param ArrayList<ArrayList<String>> codigo 
-     * @return <ArrayList<String>
-    */
 
     public ArrayList<String> listLisp (ArrayList<ArrayList<String>> codigo){
         ArrayList<String> newList = new ArrayList<String>();
         boolean hasList = false;
 
         for(int i=0;i<codigo.size();i++){
-            System.out.println(codigo.get(i));
             if(codigo.get(i).contains("list")||codigo.get(i).contains(" list")){
                 hasList = true;
             }
@@ -113,7 +104,7 @@ public class Funciones {
             for(int i=0;i<codigo.size();i++){
                 for(int j = 0; j< (codigo.get(i).size()-1);j++)
                 {
-                    newList.add(codigo.get(i).get(j)); //crea un array para conservar resultado    
+                    newList.add(codigo.get(i).get(j)); 
                 }
             }
 
@@ -128,7 +119,7 @@ public class Funciones {
             newList.add("No es list");
         }
 
-        
+        System.out.println("LISTA CREADA: "+newList);
         return newList;        
     }
 
@@ -200,17 +191,14 @@ public class Funciones {
             System.out.println(e.toString());
             System.out.println("VALOR NO VALIDO PARA LA LISTA");
         }
+        System.out.println("VALOR RETORNADO: "+valor);
         return valor;
     }
 
 
-    /**
-     * Metodo setQ
-     * @param ArrayList<ArrayList<String>> codigo
-     * @return String 
-    */
-     public String setQ (ArrayList<ArrayList<String>> codigo){
+     public ArrayList<ArrayList<String>> setQ (ArrayList<ArrayList<String>> codigo){
         ArrayList<String> newList = new ArrayList<String>();
+        ArrayList<ArrayList<String>> enviar = new ArrayList<ArrayList<String>>();
         boolean hasSet = false;
         int pos=0;
         String variable="";
@@ -238,35 +226,31 @@ public class Funciones {
                 for(int i=0;i<codigo.size();i++){
                     for(int j = 0; j< (codigo.get(i).size());j++)
                     {
-                        newList.add(codigo.get(i).get(j)); //crea un array para conservar resultado    
+                        newList.add(codigo.get(i).get(j)); 
                     }
                 }
     
                 variable = newList.get(pos +1);
     
-                System.out.println(codigo);
                 newList.remove(new String("setq"));
                 newList.remove (new String(variable));
                 newList.remove(new String("("));
                 newList.remove(new String(")"));
-                System.out.println("NEW LIST ACA"+newList);
                 ArrayList<ArrayList<String>> lista= new ArrayList<>();
                 lista.add(newList);
 
                 valor2 = listLisp(lista);
-                System.out.println("______"+valor2);
                 listadoVariables.put(variable, valor2);
             }
             else{
                 for(int i=0;i<codigo.size();i++){
                     for(int j = 0; j< (codigo.get(i).size());j++)
                     {
-                        newList.add(codigo.get(i).get(j)); //crea un array para conservar resultado    
+                        newList.add(codigo.get(i).get(j));
                     }
                 }
     
                 variable = newList.get(pos +1);
-                System.out.println("(::"+variable+"::)");
     
                 newList.remove(new String("setq"));
                 newList.remove (new String(variable));
@@ -280,7 +264,6 @@ public class Funciones {
                 
                 valor2 = new ArrayList<>();
                 valor2.add(valor);
-                System.out.println("______"+valor2);
                 listadoVariables.put(variable, valor2);
             }
         }
@@ -289,104 +272,125 @@ public class Funciones {
             newList.add("ERROR..., No se ha podido conservar la variable");
         }
 
-        System.out.println(variable + "-->>" + valor2);
-        codigo = new ArrayList<ArrayList<String>>();
-        return variable + "-->>" + valor2;    
+        enviar.add(newList);
+
+        System.out.println("VARIABLE "+variable+" CREADA: "+valor2);
+        return  enviar;
     }   
     
 
 
     public ArrayList<ArrayList<String>> BuscarVar(ArrayList<ArrayList<String>> codigo)
     {
-        for(String element : listadoVariables.keySet())
+        boolean hasPosition=false;
+        ArrayList<String> result=new ArrayList<>();
+        int pos1=0;
+        int pos2=0;
+        if(verificar.VerifList(codigo))
         {
-            for(int i = 0; i < codigo.size(); i++) {
-                for(int j =0; j<codigo.get(i).size();j++)
-                {
-                    if(element.equals(codigo.get(i).get(j)))
+            hasPosition=true;
+        }
+        else
+        {
+            for(String element : listadoVariables.keySet())
+            {
+                for(int i = 0; i < codigo.size(); i++) {
+                    for(int j =0; j<codigo.get(i).size();j++)
                     {
-                        for(String a: listadoVariables.get(element))
+                        if(element.equals(codigo.get(i).get(j)))
                         {
-                            codigo.get(i).set(j,a);
-                            System.out.println(a);
+                            pos1=i;
+                            pos2=j;
+                            for(String a: listadoVariables.get(element))
+                            {
+                                result.add(a);
+                            }
                         }
                     }
                 }
             }
         }
         
-        System.out.println(codigo);
-        return codigo;
+        
+        if(hasPosition)
+        {
+            String resultadoF = ListValue(codigo.get(0));
+            //codigo.get(0).clear();
+            //codigo.get(0).add(resultadoF);
+            codigo.get(0).add(resultadoF);
+            return codigo;
+        }
+        else
+        {
+            if(result.size()>1)
+            {
+                String env = "[";
+                for(String a : result)
+                {
+                    env+=a+", ";
+                }
+                codigo.get(0).add(env);
+                return codigo;
+            }
+            else
+            {
+                codigo.get(pos1).set(pos2, result.get(0));
+                return codigo;
+            }
+        }
     }
 
 
-    
-    /**
-     * Metodo Atom
-     * @param ArrayList<ArrayList<String>> codigo
-     * @return boolean 
-     */
 
     public String atom (ArrayList<ArrayList<String>> codigo){
         int size = codigo.size();
+        boolean hascons=false;
+        boolean haslist=false;
         for(int i=0;i<size;i++){
             for(int j = 0; j<codigo.get(i).size();j++){
                 if(codigo.get(i).get(j).contains("atom")){
-                    try {
-                        if (codigo.get(i-1).get(j-1).contains("cons")||codigo.get(i-1).get(j-1).contains("list")){
-                            return "false";
-                        }else{
-                            return "true";
-                        }
-
-                    }catch (Exception e){
+                    if (codigo.get(i-1).get(j-1).contains("cons")||codigo.get(i-1).get(j-1).contains("list")){
+                        System.out.println("false");
+                        return "false";
+                    }else{
+                        System.out.println("true");
                         return "true";
                     }
                 } 
             }
-        }return "false";
-				
+        }
+        System.out.println("false");
+        return "false";		
     }
 
-    /**
-     * Metodo equal
-     * @param Arraylist<Arraylist<String>> codigo
-     * @return String
-     */ 
     
     public String  equal (ArrayList<ArrayList<String>> codigo){
         int pos = 0; 
         String result = "false";
-
         
         for(int i=0;i<codigo.size();i++){ //recorre el array hasta encontrar un equals
             for(int j = 0; j<codigo.get(i).size();j++){
-                System.out.println(codigo.get(i).get(j));
                 if (codigo.get(i).get(j).equals("equal") || codigo.get(i).get(i).equals( " equal")){ 
                     pos = j; //conserva la posicion del equals
                     if(codigo.get(i).size()<5){ //evalúa dos parametros de otras listas
                         if(codigo.get(i).get(pos+1).equals(codigo.get(i).get(pos+2))){
-                            System.out.println(codigo.get(i).get(pos+1));
-                            System.out.println(codigo.get(i).get(pos+2));
-                            result = "true";
-                            
+                            System.out.println("true");
+                            result = "true";   
                         }
                     }else if(codigo.get(i).size() == 5){
                         if(codigo.get(i).get(pos+1).equals(codigo.get(i).get(pos+2))){
+                            System.out.println("true");
                             return "true";
                         }
                     }
                 }
             }
-        } return result;
+        } 
+        System.out.println("false");
+        return result;
     }
     
 
-    /**
-     * Metodo mayorMenor
-     * @param Arraylist<Arraylist<String>> codigo
-     * @return String
-     */ 
     
     public String mayorMenor(ArrayList<ArrayList<String>> codigo){
 
@@ -423,9 +427,329 @@ public class Funciones {
                     }                    
                 }
             }
-        }return estado;       
+        }
+        System.out.println(estado);
+        return estado;       
     }
 
-    
-    
+    public String cond(ArrayList<ArrayList<String>> listado){
+		String s = "";
+		int operador = 0;
+		int t = 0;
+		for(int i=0; i<listado.size();i++){
+			if(listado.get(i).contains("cond")){
+				
+				for(int j=0; j< listado.size();j++) {
+					if(listado.get(j).contains("<") || listado.get(j).contains("=") || listado.get(j).contains(">") ){
+						operador++;
+					}
+				}
+				
+				for(int k=0; k< listado.size();k++) {
+					if(listado.get(k).contains("t") || listado.get(k).contains(" t") ){
+						t = k;
+					}
+				}
+				
+				Float a = 0.0f;
+				Float b = 0.0f;
+				String c = "";
+
+				a = Float.parseFloat(listado.get(i-2).get(2));
+				b = Float.parseFloat(listado.get(i-2).get(3));
+				c = listado.get(i-2).get(1);
+			
+				switch(c){
+					case ">":
+					if(a > b && operador > 0){
+
+						for(int j=1;j<listado.get(i-1).size()-1;j++){
+							s+= listado.get(i-1).get(j);
+						}
+						return s;
+					}else if(operador > 1){
+						
+						a = Float.parseFloat(listado.get(i-4).get(2));
+						b = Float.parseFloat(listado.get(i-4).get(3));
+						c = listado.get(i-4).get(1);
+						switch(c){
+							case ">":
+								if(a > b){
+								for(int j=1;j<listado.get(i-3).size()-1;j++){
+									s+= listado.get(i-3).get(j);
+									}
+									return s;	
+								}else{
+									if(listado.get(i-5).size()>3){
+										for(int j=2;j<listado.get(i-5).size()-1;j++){
+												s+= listado.get(i-5).get(j)+" ";
+											}
+											return s;
+										}
+									else{
+										for(int j=i-6;j>-1;j--){
+											for(int k=1; k<listado.get(j).size()-1;k++){
+												s+= listado.get(j).get(k)+" ";
+											}
+										}
+										return s;
+									}
+								}
+							 
+							case "<":
+								if(a < b){
+								for(int j=1;j<listado.get(i-3).size()-1;j++){
+									s+= listado.get(i-3).get(j);
+									}	
+									return s;
+								}else{
+								if(listado.get(i-5).size()>3){
+										for(int j=2;j<listado.get(i-5).size()-1;j++){
+												s+= listado.get(i-5).get(j)+" ";
+											}
+											return s;
+										}
+									else{
+										for(int j=i-6;j>-1;j--){
+											for(int k=1; k<listado.get(j).size()-1;k++){
+												s+= listado.get(j).get(k)+" ";
+											}
+										}
+										return s;
+									}
+								}
+							 
+
+							case "=":
+								if(Math.abs(a-b)<1.0){
+								for(int j=1;j<listado.get(i-3).size()-1;j++){
+									s+= listado.get(i-3).get(j);
+									}	
+									return s;
+								}else{
+								if(listado.get(i-5).size()>3){
+										for(int j=2;j<listado.get(i-5).size()-1;j++){
+												s+= listado.get(i-5).get(j)+" ";
+											}
+											return s;
+										}
+									else{
+										for(int j=i-6;j>-1;j--){
+											for(int k=1; k<listado.get(j).size()-1;k++){
+												s+= listado.get(j).get(k)+" ";
+											}
+										}
+										return s;
+									}
+								}
+							 
+						}
+					}else if(operador == 1) {
+						for(int j = t-1; j > -1; j-- ) {
+							for(int k=1; k<listado.get(j).size()-1;k++){
+								s+= listado.get(j).get(k)+" ";
+							}
+						}
+						return s;
+						
+					}
+					
+					
+					 
+
+					case "<":
+					if(a < b){
+						for(int j=1;j<listado.get(i-1).size()-1;j++){
+						s+= listado.get(i-1).get(j);
+						}
+						return s;
+					}else if(operador > 1){
+						a = Float.parseFloat(listado.get(i-4).get(2));
+						b = Float.parseFloat(listado.get(i-4).get(3));
+						c = listado.get(i-4).get(1);
+						switch(c){
+							case ">":
+								if(a > b){
+								for(int j=1;j<listado.get(i-3).size()-1;j++){
+									s+= listado.get(i-3).get(j);
+									}	
+									return s;
+								}else{
+								if(listado.get(i-5).size()>3){
+										for(int j=2;j<listado.get(i-5).size()-1;j++){
+												s+= listado.get(i-5).get(j)+" ";
+											}
+											return s;
+										}
+									else{
+										for(int j=i-6;j>-1;j--){
+											for(int k=1; k<listado.get(j).size()-1;k++){
+												s+= listado.get(j).get(k)+" ";
+											}
+										}
+										return s;
+									}
+								}
+							case "<":
+								if(a < b){
+								for(int j=1;j<listado.get(i-3).size()-1;j++){
+									s+= listado.get(i-3).get(j);
+									}	
+									return s;
+								}else{
+								if(listado.get(i-5).size()>3){
+										for(int j=2;j<listado.get(i-5).size()-1;j++){
+												s+= listado.get(i-5).get(j)+" ";
+											}
+											return s;
+										}
+									else{
+										for(int j=i-6;j>-1;j--){
+											for(int k=1; k<listado.get(j).size()-1;k++){
+												s+= listado.get(j).get(k)+" ";
+											}
+										}
+										return s;
+									}
+								}
+							 
+
+							case "=":
+								if(Math.abs(a-b)<1.0){
+								for(int j=1;j<listado.get(i-3).size()-1;j++){
+									s+= listado.get(i-3).get(j);
+									}
+									return s;	
+								}else{
+								if(listado.get(i-5).size()>3){
+										for(int j=2;j<listado.get(i-5).size()-1;j++){
+												s+= listado.get(i-5).get(j)+" ";
+											}
+											return s;
+										}
+									else{
+										for(int j=i-6;j>-1;j--){
+											for(int k=1; k<listado.get(j).size()-1;k++){
+												s+= listado.get(j).get(k)+" ";
+											}
+										}
+										return s;
+									}
+								}
+							 
+						}
+					}else if(operador == 1) {
+						for(int j = t-1; j > -1; j-- ) {
+							for(int k=1; k<listado.get(j).size()-1;k++){
+								s+= listado.get(j).get(k)+" ";
+							}
+						}
+						return s;
+						
+					}
+					
+
+					case "=":
+					if(Math.abs(a-b)<1){
+						for(int j=1;j<listado.get(i-1).size()-1;j++){
+						s+= listado.get(i-1).get(j);
+						}
+						return s;
+					}else if(operador > 1){
+						a = Float.parseFloat(listado.get(i-4).get(2));
+						b = Float.parseFloat(listado.get(i-4).get(3));
+						c = listado.get(i-4).get(1);
+						switch(c){
+							case ">":
+								if(a > b){
+								for(int j=1;j<listado.get(i-3).size()-1;j++){
+									s+= listado.get(i-3).get(j);
+									}	
+									return s;
+								}else{
+								if(listado.get(i-5).size()>3){
+										for(int j=2;j<listado.get(i-5).size()-1;j++){
+												s+= listado.get(i-5).get(j)+" ";
+											}
+											return s;
+										}
+									else{
+										for(int j=i-6;j>-1;j--){
+											for(int k=1; k<listado.get(j).size()-1;k++){
+												s+= listado.get(j).get(k)+" ";
+											}
+										}
+										return s;
+									}
+								}
+								
+							 
+							case "<":
+								if(a < b){
+								for(int j=1;j<listado.get(i-3).size()-1;j++){
+									s+= listado.get(i-3).get(j);
+									}	
+									return s;
+								}else{
+								if(listado.get(i-5).size()>3){
+										for(int j=2;j<listado.get(i-5).size()-1;j++){
+												s+= listado.get(i-5).get(j)+" ";
+											}
+											return s;
+										}
+									else{
+										for(int j=i-6;j>-1;j--){
+											for(int k=1; k<listado.get(j).size()-1;k++){
+												s+= listado.get(j).get(k)+" ";
+											}
+										}
+										return s;
+									}
+								}
+							 
+							case "=":
+								if(Math.abs(a-b)<1){
+								for(int j=1;j<listado.get(i-3).size()-1;j++){
+									s+= listado.get(i-3).get(j);
+									}	
+									return s;
+								}else{
+								if(listado.get(i-5).size()>3){
+										for(int j=2;j<listado.get(i-5).size()-1;j++){
+												s+= listado.get(i-5).get(j)+" ";
+											}
+											return s;
+										}
+									else{
+										for(int j=i-6;j>-1;j--){
+											for(int k=1; k<listado.get(j).size()-1;k++){
+												s+= listado.get(j).get(k)+" ";
+											}
+										}
+										return s;
+									}
+								}
+							 
+						}
+					}else if(operador == 1) {
+						
+						for(int j = t-1; j > -1; j-- ) {
+							for(int k=1; k<listado.get(j).size()-1;k++){
+								s+= listado.get(j).get(k)+" ";
+							}
+						}
+						
+							return s;
+						}
+						
+					}
+				}
+
+				
+			}	
+		
+		return "Fallo funcion cond";
+        }
 }
+
+
