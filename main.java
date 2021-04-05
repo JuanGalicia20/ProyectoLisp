@@ -1,28 +1,49 @@
 import java.util.Scanner;
-import javax.swing.JFileChooser;
 
-import org.w3c.dom.UserDataHandler;
-
-import java.io.File;
 
 public class main{
+
+    private static Parser parse = new Parser();
     public static void main(String[] args) {
-        Scanner leer = new Scanner(System.in);
-        System.out.println("Ingrese el codigo lisp");
-        String codigo = leer.nextLine();
-        verificar verificar = new verificar(codigo);
+        Scanner scan = new Scanner(System.in);
+        Boolean seguir = true;
+        
+        
+        do{
+            System.out.println("Ingrese el codigo lisp");
+            String text = leerIngreso(scan);
+            if (text.equals("")) {
+                seguir = false;
+            } else {
+                Verificar verificar = new Verificar(text);
+                if (verificar.verif1()) 
+                {
+                    System.out.println("Expresion balanceada, continuando...");
+                    
+                    System.out.println("MAIN"+parse.funcion(text));
+                } 
+                else 
+                {
+                    System.out.println("La expresion no está balanceada en parentesis");
+                }
+            }
+        }
+        while(seguir);
+        
         //Funciones fun = new Funciones();
         //fun.quote(codigo);
-        if (verificar.verif1()) 
-            {
-                System.out.println("The expression is balanced");
-                Parser parse = new Parser();
-                System.out.println(parse.separateString(codigo));
-            } 
-                
-            else 
-            {
-                System.out.println("The expression is not balanced");
+        
+    }
+
+    private static String leerIngreso(Scanner scan){
+        String text = "";
+        while(scan.hasNextLine()){
+            String input = scan.nextLine();
+            if(input == null || input.isEmpty()){
+                break; 
             }
+            text += " " +input;
+        }
+        return text;
     }
 }
