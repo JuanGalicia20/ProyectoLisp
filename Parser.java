@@ -8,11 +8,10 @@ public class Parser {
 	static  ArrayList<ArrayList<String>>lispEntry = new ArrayList<ArrayList<String>>();
 	static Funciones run = new Funciones();
 	private ArrayList<String> list = new ArrayList<String>();
-	private String[] palabrasClave = { "defun", "setq","atom","cond","equal","+","-","/","*","list","quote","<",">"};
+	private String[] palabrasClave = { "defun", "atom","list","cond","equal","+","-","/","*","setq","quote","<",">"};
 	Funciones fun = new Funciones();
 	Arithmetic ops = new Arithmetic();
 	Declaracion dec = new Declaracion();
-	Predicados predicados = new Predicados();
 
 
 	public ArrayList<String> funcion(String codigo)
@@ -34,9 +33,8 @@ public class Parser {
 		else {
 			if(verif.VerifVariable(lispEntry, fun.getListadoVariables()))
 			{
-				//finalArray.add(fun.BuscarVar(lispEntry));
 				lispEntry=fun.BuscarVar(lispEntry);
-				finalArray.add(lispEntry.toString());
+				System.out.println("nnnnnnnnnnnn"+lispEntry);
 			}
 			else if(verif.VerifList(lispEntry))
 			{
@@ -59,22 +57,18 @@ public class Parser {
 									j = palabrasClave.length;
 									break;
 								case 1:
-									lispEntry=(fun.setQ(lispEntry));
-									break;
-								case 2:
 									finalArray.add(fun.atom(lispEntry));
 									break;
+								case 2:
+									finalArray = fun.listLisp(lispEntry);
+									break;
 								case 3:
-									try{
-										lispEntry = convertirArray(codigo);
-										finalArray.add(predicados.funCond(lispEntry));
+									/*try{
+										finalArray.add(predicados.funCond(ingresoLisp));
 									} catch (Exception e) {
 										finalArray.add("Debes de ingresar 3 condiciones");
-									}
-									i = lispEntry.size();
-									k = fixedArray.size();
-									j = palabrasClave.length;
-								break;															//"defun", "atom","list","cond","equal","+","-","/","*","setq","quote"
+									}*/
+									break;									//"defun", "atom","list","cond","equal","+","-","/","*","setq","quote"
 								case 4:
 									finalArray.add(fun.equal(lispEntry));
 									break;
@@ -85,7 +79,8 @@ public class Parser {
 												finalArray.add(String.valueOf(ops.calculateArithmetic(fixedArray)));
 												break;
 								case 9:
-									finalArray = fun.listLisp(lispEntry);
+									finalArray.add(fun.setQ(lispEntry));
+									System.out.println("xxxx"+lispEntry);
 									break;
 								case 10:
 									finalArray.add(fun.quote(lispEntry));
@@ -95,7 +90,6 @@ public class Parser {
 										finalArray.add(fun.mayorMenor(lispEntry));
 									break;
 								default:
-									finalArray.add("Error en el ingreso");
 									break;
 							}
 							break;
@@ -103,12 +97,10 @@ public class Parser {
 					}
 				}
 			}
-			if(finalArray.size() == 0) {
-				finalArray.add("Error en el ingreso, intentalo de nuevo");
-			}
+
+			
 		return finalArray;
 		}
-
 	}
 	public ArrayList<ArrayList<String>> getStack(String entry) {
 		entry = entry.toLowerCase();
@@ -227,120 +219,4 @@ public class Parser {
         return stack;
         
     }
-		
-	public ArrayList<ArrayList<String>> convertirArray(String input){
-		input = input.toLowerCase();
-
-		actual = 0;
-		lispEntry = new ArrayList<ArrayList<String>>();
-		ArrayList<String> invertido = new ArrayList<String>(); //Arraylist temporal de invertidos
-
-		String[] split_text = input.split(" "); //Se convierte a vector por espacio
-		input = addSpace(split_text);
-		split_text = input.split(" "); //Se convierte a vector por espacio
-
-
-
-		
-		for (int i=0; i<split_text.length; i++) {
-			invertido.add(split_text[i]); //Se crea un array con todas las letras
-		}
-		
-		Collections.reverse(invertido); //Se invierte el orden
-
-		for (int j=0; j< invertido.size(); j++) {
-			ArrayList<String> temporal = new ArrayList<String>(); //Se genera un nuevo arraylist
-			if (invertido.get(j).equals("(")) { //Se busca el abierto
-				for (int k=j; k>0; k--) {  //Se busca el de cerrar apartir de la posicion del abierto
-					if (invertido.get(k).equals(")")){ //Se busca el de cerrar
-						for (int l=j; (l+1)!=k; l--) { //Se comienza en la posicion del ( y se realiza el loop hasta llegar al )
-							temporal.add(invertido.get(l)); //Se agregan las letras dentro de los parentesis
-							invertido.remove(l); //Se quita la operacion encontrada
-						}
-
-						j = 0; //Se regresa j a cero para reiniciar el ciclo
-						agregar(temporal);
-						break;
-
-					}
-
-				}
-			}
-		}
-		
-		Collections.reverse(invertido); //Se revierte el orden
-		agregar(invertido); //Se agrega lo ultimo dejado en invertidos
-		System.out.print(lispEntry);
-		return lispEntry;
-		
-	}
-
-	/**
-	@param temporal 	Se recibe el arraylist temporal
-	Post: Se agrega lo mas significativo al arraylist listado
-	*/
-	private void agregar(ArrayList<String> temporal){
-		StringBuilder  s=new StringBuilder();
-		list = new ArrayList<String>();
-		boolean first = true;
-
-		if (temporal.size()>0) {
-			//Se regresa el array a string
-			String complete_word = "";
-			for (String i : temporal) {
-				if (first) {
-					s.append(i); //No agrega espacio a la primera letra
-					first = false;
-				} else {
-					s.append(" " + i); //Agrega esoacios entre las palabras
-				}
-			}
-			complete_word = s.toString(); //Se convierte el builder a String
-			String[] complete = complete_word.split(" ");
-
-			for (int i = 0; i<complete.length; i++) {
-				list.add(complete[i]); //Se agrega la primer operacion al list					
-			}
-
-
-			lispEntry.add(actual, list);
-			actual++;
-			
-		}
-	}
-	/**
-	Pre: Se obtiene lo ingresado por el usuario
-	@param input 			Se obtiene lo ingresado separado por un espacio
-	@return Se retorna lo ingresado de forma correcta 
-	*/
-	private String addSpace(String[] input){
-		String[] temporal;
-
-		String str = "";
-		String temporal2 = "";
-
-		/*Se separan los parentesis que vayan unidos para separar bien el programa*/
-		for (int j=0; j<input.length; j++) {
-			str = input[j];
-			temporal = str.split("");
-			
-			str = str.replaceAll("\\)"," ) ");
-			str = str.replaceAll("\\("," ( ");
-
-			//Se agrega al nuevo string
-			temporal2 += " " + str;
-
-		}
-
-		StringTokenizer st = new StringTokenizer(temporal2, " ");
-		StringBuffer sb = new StringBuffer();
-		//Se quitan espacios extras
-		while(st.hasMoreElements()){
-		    sb.append(st.nextElement()).append(" ");
-		}
-		//Se regresa bien escrito lo ingresado
-		temporal2 = sb.toString();
-		return temporal2;
-	}
-
 }
