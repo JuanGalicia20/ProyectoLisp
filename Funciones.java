@@ -4,6 +4,7 @@ public class Funciones {
 
     //atributos
     private LinkedHashMap <String, ArrayList<String>> listadoVariables;
+    Verificar verificar = new Verificar();
 
     //Constructor
     public Funciones(){
@@ -86,6 +87,7 @@ public class Funciones {
             newList.add("No es quote");
         }
 
+        System.out.println("QUOTE: "+finalString);
         return finalString;        
     
     }
@@ -102,7 +104,6 @@ public class Funciones {
         boolean hasList = false;
 
         for(int i=0;i<codigo.size();i++){
-            System.out.println(codigo.get(i));
             if(codigo.get(i).contains("list")||codigo.get(i).contains(" list")){
                 hasList = true;
             }
@@ -128,7 +129,7 @@ public class Funciones {
             newList.add("No es list");
         }
 
-        
+        System.out.println("LISTA CREADA: "+newList);
         return newList;        
     }
 
@@ -200,6 +201,7 @@ public class Funciones {
             System.out.println(e.toString());
             System.out.println("VALOR NO VALIDO PARA LA LISTA");
         }
+        System.out.println("VALOR RETORNADO: "+valor);
         return valor;
     }
 
@@ -209,8 +211,9 @@ public class Funciones {
      * @param ArrayList<ArrayList<String>> codigo
      * @return String 
     */
-     public String setQ (ArrayList<ArrayList<String>> codigo){
+     public ArrayList<ArrayList<String>> setQ (ArrayList<ArrayList<String>> codigo){
         ArrayList<String> newList = new ArrayList<String>();
+        ArrayList<ArrayList<String>> enviar = new ArrayList<ArrayList<String>>();
         boolean hasSet = false;
         int pos=0;
         String variable="";
@@ -244,17 +247,14 @@ public class Funciones {
     
                 variable = newList.get(pos +1);
     
-                System.out.println(codigo);
                 newList.remove(new String("setq"));
                 newList.remove (new String(variable));
                 newList.remove(new String("("));
                 newList.remove(new String(")"));
-                System.out.println("NEW LIST ACA"+newList);
                 ArrayList<ArrayList<String>> lista= new ArrayList<>();
                 lista.add(newList);
 
                 valor2 = listLisp(lista);
-                System.out.println("______"+valor2);
                 listadoVariables.put(variable, valor2);
             }
             else{
@@ -266,7 +266,6 @@ public class Funciones {
                 }
     
                 variable = newList.get(pos +1);
-                System.out.println("(::"+variable+"::)");
     
                 newList.remove(new String("setq"));
                 newList.remove (new String(variable));
@@ -280,7 +279,6 @@ public class Funciones {
                 
                 valor2 = new ArrayList<>();
                 valor2.add(valor);
-                System.out.println("______"+valor2);
                 listadoVariables.put(variable, valor2);
             }
         }
@@ -289,34 +287,72 @@ public class Funciones {
             newList.add("ERROR..., No se ha podido conservar la variable");
         }
 
-        System.out.println(variable + "-->>" + valor2);
-        codigo = new ArrayList<ArrayList<String>>();
-        return variable + "-->>" + valor2;    
+        enviar.add(newList);
+
+        System.out.println("VARIABLE "+variable+" CREADA: "+valor2);
+        return  enviar;
     }   
     
 
 
     public ArrayList<ArrayList<String>> BuscarVar(ArrayList<ArrayList<String>> codigo)
     {
-        for(String element : listadoVariables.keySet())
+        boolean hasPosition=false;
+        ArrayList<String> result=new ArrayList<>();
+        int pos1=0;
+        int pos2=0;
+        if(verificar.VerifList(codigo))
         {
-            for(int i = 0; i < codigo.size(); i++) {
-                for(int j =0; j<codigo.get(i).size();j++)
-                {
-                    if(element.equals(codigo.get(i).get(j)))
+            hasPosition=true;
+        }
+        else
+        {
+            for(String element : listadoVariables.keySet())
+            {
+                for(int i = 0; i < codigo.size(); i++) {
+                    for(int j =0; j<codigo.get(i).size();j++)
                     {
-                        for(String a: listadoVariables.get(element))
+                        if(element.equals(codigo.get(i).get(j)))
                         {
-                            codigo.get(i).set(j,a);
-                            System.out.println(a);
+                            pos1=i;
+                            pos2=j;
+                            for(String a: listadoVariables.get(element))
+                            {
+                                result.add(a);
+                            }
                         }
                     }
                 }
             }
         }
         
-        System.out.println(codigo);
-        return codigo;
+        
+        if(hasPosition)
+        {
+            String resultadoF = ListValue(codigo.get(0));
+            //codigo.get(0).clear();
+            //codigo.get(0).add(resultadoF);
+            codigo.get(0).add(resultadoF);
+            return codigo;
+        }
+        else
+        {
+            if(result.size()>1)
+            {
+                String env = "[";
+                for(String a : result)
+                {
+                    env+=a+", ";
+                }
+                codigo.get(0).add(env);
+                return codigo;
+            }
+            else
+            {
+                codigo.get(pos1).set(pos2, result.get(0));
+                return codigo;
+            }
+        }
     }
 
 
@@ -329,23 +365,23 @@ public class Funciones {
 
     public String atom (ArrayList<ArrayList<String>> codigo){
         int size = codigo.size();
+        boolean hascons=false;
+        boolean haslist=false;
         for(int i=0;i<size;i++){
             for(int j = 0; j<codigo.get(i).size();j++){
                 if(codigo.get(i).get(j).contains("atom")){
-                    try {
-                        if (codigo.get(i-1).get(j-1).contains("cons")||codigo.get(i-1).get(j-1).contains("list")){
-                            return "false";
-                        }else{
-                            return "true";
-                        }
-
-                    }catch (Exception e){
+                    if (codigo.get(i-1).get(j-1).contains("cons")||codigo.get(i-1).get(j-1).contains("list")){
+                        System.out.println("false");
+                        return "false";
+                    }else{
+                        System.out.println("true");
                         return "true";
                     }
                 } 
             }
-        }return "false";
-				
+        }
+        System.out.println("false");
+        return "false";		
     }
 
     /**
@@ -357,28 +393,28 @@ public class Funciones {
     public String  equal (ArrayList<ArrayList<String>> codigo){
         int pos = 0; 
         String result = "false";
-
         
         for(int i=0;i<codigo.size();i++){ //recorre el array hasta encontrar un equals
             for(int j = 0; j<codigo.get(i).size();j++){
-                System.out.println(codigo.get(i).get(j));
                 if (codigo.get(i).get(j).equals("equal") || codigo.get(i).get(i).equals( " equal")){ 
                     pos = j; //conserva la posicion del equals
                     if(codigo.get(i).size()<5){ //evalúa dos parametros de otras listas
                         if(codigo.get(i).get(pos+1).equals(codigo.get(i).get(pos+2))){
-                            System.out.println(codigo.get(i).get(pos+1));
-                            System.out.println(codigo.get(i).get(pos+2));
+                            System.out.println("true");
                             result = "true";
                             
                         }
                     }else if(codigo.get(i).size() == 5){
                         if(codigo.get(i).get(pos+1).equals(codigo.get(i).get(pos+2))){
+                            System.out.println("true");
                             return "true";
                         }
                     }
                 }
             }
-        } return result;
+        } 
+        System.out.println("false");
+        return result;
     }
     
 
@@ -423,9 +459,14 @@ public class Funciones {
                     }                    
                 }
             }
-        }return estado;       
+        }
+        System.out.println(estado);
+        return estado;       
     }
 
     
     
 }
+
+
+
