@@ -10,7 +10,7 @@ public class main{
         
         
         do{
-            System.out.println("Ingrese el codigo lisp");
+            System.out.println("Ingrese el codigo lisp: ");
             String text = leerIngreso(scan);
             if (text.equals("")) {
                 seguir = false;
@@ -19,8 +19,15 @@ public class main{
                 if (verificar.verif1()) 
                 {
                     System.out.println("Expresion balanceada, continuando...");
-                    
-                    System.out.println("MAIN"+parse.funcion(text));
+                    System.out.println("\n---------------------------------------------------\n");
+                    try{
+                        System.out.println( "Resultado Final: " + String.valueOf(parse.funcion(text).get(0)) );
+                        System.out.println("\n---------------------------------------------------");
+                    }catch(Exception e){
+                        System.out.println(e);
+                        System.out.println("Parece que ocurrio un error, intenta de nuevo");
+                        System.out.println("\n---------------------------------------------------");
+                    }
                 } 
                 else 
                 {
