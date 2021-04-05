@@ -27,18 +27,15 @@ public class Declaracion {
 
 		// Agregando las funciones 
 		this.functions.put(functionName, funtion);
-		System.out.println(functions);
 		this.variables.put(functionName, variablesF);
 		this.oldFunction.put(functionName, nuevaFuncion);
 		
-		System.out.println(funtion);
 		return functionName;
 	}
     
     private ArrayList<String> setNombreFuncion(ArrayList<ArrayList<String>> nombre) {
 		this.nuevaFuncion = nombre;
 		ArrayList<String> nombre2 = nombre.get(nombre.size() - 1);
-
 		ArrayList<String> temporal = new ArrayList<String>();
 		Integer index = 0;
 		String nombreAux = "", nombreAux2 = "";
@@ -57,7 +54,8 @@ public class Declaracion {
 		nombreAux2 = nombre2.get(index + 1);
 
 		nombreAux = "";	
-
+		open = 0;
+		closed = 0;
 		if (nombreAux.equals("")) {
 			for(int i = 0; i < nombre2.size() - 1; i++) {
 				if(closed == 0) {
@@ -74,7 +72,7 @@ public class Declaracion {
 			}
 			
 			for(int j = open; j < closed; j++) {
-					nombreAux += nombre2.get(j);
+					nombreAux += nombre2.get(j) +" ";
 			}
 		}
 		
@@ -83,18 +81,26 @@ public class Declaracion {
 
 		// Agregando a las listas
 		aux[0] = nombreAux2;
-		aux[1] = nombreAux.replace(" ","");
+		aux[1] = nombreAux;
 
 		// Agregando el nombre
 		temporal.add(aux[0]);
 
 		// Separando todas las variables
 		aux = aux[1].split(",");
+		aux = aux[0].split(" ");
+		
+		
+		for(int i = 0; i < aux.length; i++) {
+			if(!aux[i].isEmpty() || !aux[i].equals("")) {
+				temporal.add(aux[i]);
+			}
+		}
 
 		// Agregando todas las variables
-		for(int i = 0; i < aux.length; i++){
-			temporal.add(aux[i]);
-		}
+		//for(int i = 0; i < temp1.size(); i++){
+		//	temporal.add(temp1.get(i));
+		//}
 
 		return temporal;
 	}
@@ -154,7 +160,7 @@ public class Declaracion {
 		String functionName = function.get(0).get(1).toUpperCase(); // Nombre en mayusculas de la funcion
 		function.get(0).remove(1);
 		function.get(0).remove("(");
-		function.get(0).remove(function.size());
+		function.get(0).remove(")");
 		//---------------------------------------------------------
 
 		// Consiguiendo los elementos necesarios para poder realizar la funcion
@@ -186,7 +192,7 @@ public class Declaracion {
 		}
 
 			// Empieza la ejecuciÃ³n del programa verificando en donde empieza
-			/*if(logic){
+			if(logic){
 				funtionality = predicateCommunication(functionName, replaceVariables);				
 
 				// Verificando si posee recursividad el metodo
@@ -200,8 +206,9 @@ public class Declaracion {
 							for(int j = 0; j < 3; j++){
 								container.add(funtionality.remove(i));
 							}
-
-							//recursiveContainer.add(calc.operar(convertArrayList(3)));
+							container.addFirst("(");
+							container.addLast(")");
+							recursiveContainer.add(String.valueOf((calc.calculateArithmetic(convertArrayList(5)))));
 							i--;
 						}
 
@@ -212,7 +219,7 @@ public class Declaracion {
 						recursiveGanas.add("(");
 						recursiveGanas.add(functionName);
 						recursiveGanas.add(recursiveContainer.remove(0)); 
-						recursiveGanas.add(" )");
+						recursiveGanas.add(")");
 
 						recursiveMagic.add(recursiveGanas); // Agregando para que pueda operar
 						recursiveContainer.add(runFuncion(recursiveMagic));
@@ -221,11 +228,17 @@ public class Declaracion {
 					}
 
 					// Agregando los ultimos valores
-					recursiveContainer.add(0, funtionality.get(0));
+					for(int j = funtionality.size()-1; j > -1; j--) {
+						recursiveContainer.add(0, funtionality.get(j));
+					}
+					recursiveContainer.add(0, "(");
+					recursiveContainer.add(")");
 					recursiveMagic.add(recursiveContainer);
 
 					// Haciendo la ultima operaciones
-					//resultado = calc.operar(recursiveMagic);
+				
+					resultado = String.valueOf(calc.calculateArithmetic(recursiveContainer));
+					
 
 				}else if(funtionality.size() == 1){
 					return funtionality.get(0);
@@ -233,7 +246,7 @@ public class Declaracion {
 
 				return resultado;
 
-			}else{*/
+			}else{
 
 				// Realizando sin recursividad 
 				for(int i = 0; i < funtionality.size(); i++){
@@ -245,29 +258,43 @@ public class Declaracion {
 						aritmetico = true; // Ya hubo un operador aritmetico
 						resultado = String.valueOf(calc.calculateArithmetic(funtionality));
 					}
+					
 
 				}
-
-				return resultado;
-
-		/*}else{ // Cuando ! [x,y].size() == [3, 3, 8].size() 
-			return "*** - EVAL/APPLAY: se han entregado demasiados argumentos a " + functionName;
-
-		}*/
+				
+			}
+			container.clear();
+			return resultado; 
 		
 	}
+    private ArrayList<String> convertArrayList(Integer cant){
+		ArrayList<String> aux = new ArrayList<>();
+
+		// Metiendo los datos
+		for(int i = 0; i < cant; i++){
+			aux.add(container.removeFirst());			
+		}
+
+		return aux;
+	} 
+
     
     private ArrayList<String> predicateCommunication(String functionName, ArrayList<String> replaceVariables){
-		//Predicados predicate = new Predicados();
+		Predicados predicate = new Predicados();
+		Parser parser = new Parser();
 		ArrayList<ArrayList<String>> communicate = new ArrayList<>();
 		ArrayList<String> aux = new ArrayList<>();
 		ArrayList<Integer> position = new ArrayList<>();
 		Integer auxiliar;
 		String[] temp;
 		String response, temporal;
+		String entry = "";
 
 		// Separando el string
 		communicate = (ArrayList)this.oldFunction.get(functionName).clone();
+		entry = String.join(" ", communicate.get(0));
+		communicate = parser.convertirArray(entry);
+		
 
 		// Remplazando todas las variables por nÃºmeros
 		for(int i = 0; i < communicate.size(); i++){ // Por cada elemento del arraylist
@@ -287,16 +314,16 @@ public class Declaracion {
 				}
 
 			}
+			
 		}
+		
+		response = predicate.funCond(communicate);
 
-		// Consiguiendo el string que tendra que convertirse en arraylist para ser operado
-		//response = predicate.funCond(communicate);
+		temp = response.split(" ");
 
-		//temp = response.split(" ");
-
-		//for(int i = 0; i < temp.length; i++){
-		//	aux.add(temp[i]);
-		//}
+		for(int i = 0; i < temp.length; i++){
+			aux.add(temp[i]);
+		}
 
 
 		// Regresando a communicate a su estado anterior
