@@ -1,9 +1,22 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
-
+/**
+ * @author Juan Andres Galicia 20298
+ * @author Elisa Samayoa 20710
+ * @author Jonathan Espinoza 20022
+ * 
+ * @version 5-4-2021 
+ * 
+ * Programa principal 
+ */
 public class main{
 
     private static Parser parse = new Parser();
+    
+    /** 
+     * @param args
+     */
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
         Boolean seguir = true;
@@ -21,7 +34,11 @@ public class main{
                     System.out.println("Expresion balanceada, continuando...");
                     System.out.println("\n---------------------------------------------------\n");
                     try{
-                        System.out.println( "Resultado Final: " + String.valueOf(parse.funcion(text).get(0)) );
+                        ArrayList<String> texto = parse.funcion(text);
+                        for(String t : texto)
+                        {
+                            System.out.println( "Resultado Final: " + String.valueOf(t));
+                        }
                         System.out.println("\n---------------------------------------------------");
                     }catch(Exception e){
                         System.out.println(e);
@@ -42,6 +59,11 @@ public class main{
         
     }
 
+    
+    /** 
+     * @param scan
+     * @return String
+     */
     private static String leerIngreso(Scanner scan){
         String text = "";
         while(scan.hasNextLine()){
