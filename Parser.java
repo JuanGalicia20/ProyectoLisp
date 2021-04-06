@@ -1,6 +1,16 @@
 import java.util.ArrayList;
 import java.util.*;
-
+/**
+ * @author Juan Andres Galicia 20298
+ * @author Elisa Samayoa 20710
+ * @author Jonathan Espinoza 20022
+ * 
+ * @version 5-4-2021 
+ * 
+ * Clase controladora
+ * 
+ * Separa el ingreso del usuario por espacios, analiza el ingreso del usuario y lo envia segun el metodo.
+ */
 public class Parser {
 	static int actual = 0;
 	static  ArrayList<ArrayList<String>>lispEntry = new ArrayList<ArrayList<String>>();
@@ -12,6 +22,14 @@ public class Parser {
 	Declaracion dec = new Declaracion();
 
 
+	
+	/** 
+	 * @param codigo
+	 * @return ArrayList<String>
+	 * 
+	 * 
+	 * Analiza el ingreso por posicion y si identifica algun metodo, corre el programa.
+	 */
 	public ArrayList<String> funcion(String codigo)
 	{
 		ArrayList<String> finalArray = new ArrayList<String>();
@@ -57,6 +75,7 @@ public class Parser {
 									break;
 								case 1:
 									lispEntry=(fun.setQ(lispEntry));
+									finalArray.add(lispEntry.toString());
 									break;
 								case 2:
 									finalArray.add(fun.atom(lispEntry));
@@ -80,12 +99,16 @@ public class Parser {
 										case 7:
 											case 8:
 												finalArray.add(String.valueOf(ops.calculateArithmetic(fixedArray)));
+												System.out.println(finalArray);
 												break;
 								case 9:
 									finalArray = fun.listLisp(lispEntry);
 									break;
 								case 10:
 									finalArray.add(fun.quote(lispEntry));
+									i = lispEntry.size();
+									k = fixedArray.size();
+									j = palabrasClave.length;
 									break;
 								case 11:
 									case 12:
@@ -107,6 +130,13 @@ public class Parser {
 		}
 
 	}
+	
+	/** 
+	 * @param entry
+	 * @return ArrayList<ArrayList<String>>
+	 * 
+	 * Separa la entrada del usuario por espacio
+	 */
 	public ArrayList<ArrayList<String>> getStack(String entry) {
 		entry = entry.toLowerCase();
         ArrayList<ArrayList<String>> stack = new ArrayList<>();
@@ -225,6 +255,13 @@ public class Parser {
         
     }
 		
+	
+	/** 
+	 * @param input
+	 * @return ArrayList<ArrayList<String>>
+	 * 
+	 * Separa la entrada del usuario por par de parentesis
+	 */
 	public ArrayList<ArrayList<String>> convertirArray(String input){
 		input = input.toLowerCase();
 
@@ -273,8 +310,9 @@ public class Parser {
 	}
 
 	/**
-	@param temporal 	Se recibe el arraylist temporal
-	Post: Se agrega lo mas significativo al arraylist listado
+	* @param temporal 	
+	* 
+	* Agrega cada uno de par de parentesis al arraylist
 	*/
 	private void agregar(ArrayList<String> temporal){
 		StringBuilder  s=new StringBuilder();
@@ -306,9 +344,15 @@ public class Parser {
 		}
 	}
 
+	
+	/** 
+	 * @param input
+	 * @return String
+	 * 
+	 * Agrega espacios antes de cada palabra
+	 */
 	private String addSpace(String[] input){
 		String[] temporal;
-
 		String str = "";
 		String temporal2 = "";
 
