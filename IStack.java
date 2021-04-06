@@ -1,4 +1,12 @@
-
+/**
+ * @author Juan Andres Galicia 20298
+ * @author Elisa Samayoa 20710
+ * @author Jonathan Espinoza 20022
+ * 
+ * @version 5-4-2021 
+ * 
+ * Interfaz de stack
+ */
 public interface IStack<E> 
 {
 
