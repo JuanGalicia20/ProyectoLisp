@@ -1,11 +1,22 @@
 import java.util.ArrayList;
-
+/**
+ * @author Juan Andres Galicia 20298
+ * @author Elisa Samayoa 20710
+ * @author Jonathan Espinoza 20022
+ * 
+ * @version 5-4-2021 
+ * 
+ * Realiza todas las operaciones aritmeticas que ingrese el usuario
+ * ademas de aquellas necesarias para otros metodos. 
+ */
 public class Arithmetic {
 
-    /**
-     * Calculates the arithmetic value of a lisp expression
-     * @param line line to be calculated
-     * @return double with the calculated value
+    
+    /** 
+     * @param line
+     * @return double
+     * 
+     * Calcula la cantidad de operaciones aritmeticas dentro del ingreso
      */
     public double calculateArithmetic(ArrayList<String> line) {
         LispMemory variables = new LispMemory();
@@ -32,25 +43,29 @@ public class Arithmetic {
                     break;
                 }
             }
-            //System.out.println("Hola");
             calculateParenthesis(openParentheses,closedParentheses,line);
             index++;
         }
 
         
         result = Double.parseDouble(line.get(0));
-        System.out.println("Total: " + result);
+        //System.out.println("::::"+result);
         return result;
     }
 
-    /**
-     * Calculates sub-parentheses inside an arithmetic expression
-     * @param line line to be
-     * @return
+    
+    /** 
+     * @param open
+     * @param closed
+     * @param line
+     * 
+     * Realiza la operacion aritmetica
+     *
      */
     public void calculateParenthesis(int open, int closed, ArrayList<String> line) {
         double result = 0;
         String operator = line.get(open + 1);
+        LispMemory memoria = new LispMemory();
         switch (operator) {
             case "+":
 
@@ -59,7 +74,7 @@ public class Arithmetic {
                     try {
                         number = Double.parseDouble(line.get(i));
                     } catch (Exception E) {
-                        number = Double.parseDouble(LispMemory.variableMemory.get(line.get(i)).get(1));
+                        number = Double.parseDouble(memoria.getVariables().get(line.get(i)).get(1));
                     }
                     result += number;
                 }
@@ -73,7 +88,7 @@ public class Arithmetic {
                     try {
                         number = Double.parseDouble(line.get(i));
                     } catch (Exception E) {
-                        number = Double.parseDouble(LispMemory.variableMemory.get(line.get(i)).get(1));
+                        number = Double.parseDouble(memoria.getVariables().get(line.get(i)).get(1));
                     }
                     result -= number;
                 }
@@ -86,7 +101,7 @@ public class Arithmetic {
                     try {
                         number = Double.parseDouble(line.get(i));
                     } catch (Exception E) {
-                        number = Double.parseDouble(LispMemory.variableMemory.get(line.get(i)).get(1));
+                        number = Double.parseDouble(memoria.getVariables().get(line.get(i)).get(1));
                     }
                     result *= number;
                 }
@@ -99,7 +114,7 @@ public class Arithmetic {
                     try {
                         number = Double.parseDouble(line.get(i));
                     } catch (Exception E) {
-                        number = Double.parseDouble(LispMemory.variableMemory.get(line.get(i)).get(1));
+                        number = Double.parseDouble(memoria.getVariables().get(line.get(i)).get(1));
                     }
                     result /= number;
                 }
@@ -110,7 +125,7 @@ public class Arithmetic {
             try {
                 line.remove(i);
             } catch (Exception E) {
-                System.err.println("An error occurred during the calculation");
+                System.err.println("Ocurrio un error en la operacion");
             }
         }
         line.set(open, String.valueOf(result));
