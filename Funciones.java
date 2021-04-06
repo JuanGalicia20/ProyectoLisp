@@ -1,5 +1,13 @@
 import java.util.*;
-
+/**
+ * @author Juan Andres Galicia 20298
+ * @author Elisa Samayoa 20710
+ * @author Jonathan Espinoza 20022
+ * 
+ * @version 5-4-2021 
+ * 
+ * Metodos para cada uno de los posibles metodos ingresados por el usuario
+ */
 public class Funciones {
 
 
@@ -15,80 +23,73 @@ public class Funciones {
         listadoVariables.put("pr1", prvalue1);
     }
 
+    
+    /** 
+     * @return LinkedHashMap<String, ArrayList<String>>
+     */
     public LinkedHashMap<String, ArrayList<String>> getListadoVariables()
     {
         return listadoVariables;
     }
 
    
+    
+    /** 
+     * @param codigo
+     * @return String
+     * 
+     * Devuelve el ingreso sin evaluarlo
+     */
     public String quote (ArrayList<ArrayList<String>> codigo){
         String finalString="( ";
         ArrayList<String> newList = new ArrayList<String>();
-        boolean hasList = false;
-        int pos;
+        boolean hasQuote = false;
+        int pos1=0;
 
         for(int i=0;i<codigo.size();i++){
             for(int j = 0; j<codigo.get(i).size();j++)
             {
-                if(codigo.get(i).get(j).contains("quote")||codigo.get(i).get(j).contains(" quote")){
-                    pos=j;
-                    hasList = true;
+                if(codigo.get(i).get(j).equals("quote")||codigo.get(i).get(j).equals(" quote")||
+                codigo.get(i).get(j).equals("'")||codigo.get(i).get(j).equals(" '")){
+                    pos1=i;
+                    hasQuote = true;  
+                    break;
                 }
-
-                else if(codigo.get(i).get(j).contains("'")||codigo.get(i).get(j).contains(" '")){
-                    pos=j;
-                    hasList = true;
-                }
-
-
             }
         }
 
-        if (hasList){
-            for(int i=0;i<codigo.size();i++){
-                for(int j = 0; j< (codigo.get(i).size());j++)
-                {
-                    newList.add(codigo.get(i).get(j));  
-                }
-            }
 
-            
-            for(int i=0;i<codigo.size();i++){
-                for(int j = 0; j<codigo.get(i).size();j++)
-                {
-                    if(codigo.get(i).get(j).contains("quote")||codigo.get(i).get(j).contains(" quote")){
-                        newList.remove(new String("quote"));
-                        newList.remove(new String("("));
-                        newList.remove(new String(")"));
-                    }
-
-                    else if(codigo.get(i).get(j).contains("'")||codigo.get(i).get(j).contains(" '")){
-                        newList.remove(new String("'"));
-                        newList.remove(new String("("));
-                        newList.remove(new String(")"));
-                    }
-                }
-            }          
-
-            for(String a: newList)
+        if(hasQuote)
+        {
+            for(int j = 0; j<codigo.get(pos1).size();j++)
             {
-                finalString+=a+" ";
+                newList.add(codigo.get(pos1).get(j));
             }
-            finalString+=")";
-            
         }
-
-        else{
-            newList.add("No es quote");
+    
+        newList.remove(new String("quote"));
+        newList.remove(new String("("));
+        newList.remove(new String(")"));
+        newList.remove(new String("'"));
+        for(String a: newList)
+        {
+            finalString+=a+" ";
         }
+        finalString+=")";
 
-        System.out.println("QUOTE: "+finalString);
         return finalString;        
     
     }
 
 
 
+    
+    /** 
+     * @param codigo
+     * @return ArrayList<String>
+     * 
+     * Crea una lista con los valores ingresados por el usuario
+     */
     public ArrayList<String> listLisp (ArrayList<ArrayList<String>> codigo){
         ArrayList<String> newList = new ArrayList<String>();
         boolean hasList = false;
@@ -126,6 +127,11 @@ public class Funciones {
 
 
 
+    
+    /** 
+     * @param lista
+     * @return String
+     */
     public String ListValue(ArrayList<String> lista)
     {
         String posicion = lista.get(1);
@@ -196,6 +202,13 @@ public class Funciones {
     }
 
 
+     
+     /** 
+      * @param codigo
+      * @return ArrayList<ArrayList<String>>
+      *
+      * Guarda el ingreso del usuario en una variable con el nombre que ingreso el usuario.
+      */
      public ArrayList<ArrayList<String>> setQ (ArrayList<ArrayList<String>> codigo){
         ArrayList<String> newList = new ArrayList<String>();
         ArrayList<ArrayList<String>> enviar = new ArrayList<ArrayList<String>>();
@@ -280,6 +293,13 @@ public class Funciones {
     
 
 
+    
+    /** 
+     * @param codigo
+     * @return ArrayList<ArrayList<String>>
+     * 
+     * Busca entre las variables ya creadas por el usuario
+     */
     public ArrayList<ArrayList<String>> BuscarVar(ArrayList<ArrayList<String>> codigo)
     {
         boolean hasPosition=false;
@@ -315,8 +335,7 @@ public class Funciones {
         if(hasPosition)
         {
             String resultadoF = ListValue(codigo.get(0));
-            //codigo.get(0).clear();
-            //codigo.get(0).add(resultadoF);
+            codigo.remove(new String(""));
             codigo.get(0).add(resultadoF);
             return codigo;
         }
@@ -342,17 +361,27 @@ public class Funciones {
 
 
 
+    
+    /** 
+     * @param codigo
+     * @return String
+     * 
+     * 
+     * 
+     * 
+     */
     public String atom (ArrayList<ArrayList<String>> codigo){
         int size = codigo.size();
         boolean hascons=false;
         boolean haslist=false;
         for(int i=0;i<size;i++){
             for(int j = 0; j<codigo.get(i).size();j++){
-                if(codigo.get(i).get(j).contains("atom")){
-                    if (codigo.get(i-1).get(j-1).contains("cons")||codigo.get(i-1).get(j-1).contains("list")){
+                if(codigo.get(i).get(j).equals("atom")){
+                    if (codigo.get(i).contains("cons")||codigo.get(i).contains("list")){
                         System.out.println("false");
                         return "false";
                     }else{
+
                         System.out.println("true");
                         return "true";
                     }
@@ -364,6 +393,11 @@ public class Funciones {
     }
 
     
+    
+    /** 
+     * @param codigo
+     * @return String
+     */
     public String  equal (ArrayList<ArrayList<String>> codigo){
         int pos = 0; 
         String result = "false";
@@ -392,6 +426,11 @@ public class Funciones {
     
 
     
+    
+    /** 
+     * @param codigo
+     * @return String
+     */
     public String mayorMenor(ArrayList<ArrayList<String>> codigo){
 
         float comp1 = 0;
@@ -432,6 +471,15 @@ public class Funciones {
         return estado;       
     }
 
+    
+    /** 
+     * @param listado
+     * @return String
+     * 
+     * Analiza las condiciones ingresadas por el usuario y evalua segun el resultado.
+     * 
+     * 
+     */
     public String cond(ArrayList<ArrayList<String>> listado){
 		String s = "";
 		int operador = 0;
@@ -748,7 +796,7 @@ public class Funciones {
 				
 			}	
 		
-		return "Fallo funcion cond";
+		return "Fallo en funcion COND";
         }
 }
 
