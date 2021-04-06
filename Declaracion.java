@@ -1,5 +1,17 @@
 import java.util.*;
 
+/**
+ * @author Juan Andres Galicia 20298
+ * @author Elisa Samayoa 20710
+ * @author Jonathan Espinoza 20022
+ * 
+ * @version 5-4-2021 
+ * 
+ * Guarda y corre las funciones definidas por el usuario
+ * ademas de verificar que las funciones existan. 
+ * 
+ */
+
 public class Declaracion {
 	private ArrayList<ArrayList<String>> nuevaFuncion = new  ArrayList<ArrayList<String>>();
 	private Map<String, ArrayList<String>> functions = new HashMap<>();
@@ -8,8 +20,16 @@ public class Declaracion {
 	private ArrayDeque<String> container = new ArrayDeque<>();
 	private int open = 0;
 	private int closed = 0;
-
-    public String setFuncion(ArrayList<ArrayList<String>> nuevaFuncion){
+	
+    
+	/** 
+	 * @param nuevaFuncion
+	 * @return String
+	 * 
+	 * Separa el nombre de la funcion de la funcionalidad y la guarda
+	 * en un hashmap
+	 */
+	public String setFuncion(ArrayList<ArrayList<String>> nuevaFuncion){
 		ArrayList<String> variablesF = new ArrayList<>();
 		ArrayList<String> funtion = new ArrayList<>();
 		String functionName;
@@ -29,7 +49,14 @@ public class Declaracion {
 		return functionName;
 	}
     
-    private ArrayList<String> setNombreFuncion(ArrayList<ArrayList<String>> nombre) {
+    
+	/** 
+	 * @param nombre
+	 * @return ArrayList<String>
+	 * 
+	 * Guarda el nombre de la funcion definida
+	 */
+	private ArrayList<String> setNombreFuncion(ArrayList<ArrayList<String>> nombre) {
 		this.nuevaFuncion = nombre;
 		ArrayList<String> nombre2 = nombre.get(nombre.size() - 1);
 		ArrayList<String> temporal = new ArrayList<String>();
@@ -90,7 +117,14 @@ public class Declaracion {
 		return temporal;
 	}
     
-    private ArrayList<String> setFuncionalidadFuncion(ArrayList<ArrayList<String>> funtionality){
+    
+	/** 
+	 * @param funtionality
+	 * @return ArrayList<String>
+	 * 
+	 * Guarda la funcionalidad de la funcion definida
+	 */
+	private ArrayList<String> setFuncionalidadFuncion(ArrayList<ArrayList<String>> funtionality){
 		funtionality = this.nuevaFuncion;
 		ArrayList<ArrayList<String>> temp = new ArrayList<>();
 		ArrayList<String> aux = new ArrayList<>();
@@ -110,14 +144,21 @@ public class Declaracion {
 		return aux;
 	}
     
-    public String runFuncion(ArrayList<ArrayList<String>> function){
+    
+	/** 
+	 * @param function
+	 * @return String
+	 * 
+	 * Corre la funcion llamada por el usuario. 
+	 */
+	public String runFuncion(ArrayList<ArrayList<String>> function){
     	Arithmetic calc = new Arithmetic();
 		ArrayList<String> funtionality = new ArrayList<>();
-		ArrayList<String> variablesM = new ArrayList<>(); 
+		ArrayList<String> savedVariables = new ArrayList<>(); 
 		ArrayList<String> replaceVariables = new ArrayList<>(); 
 		ArrayList<String> recursiveContainer = new ArrayList<>(); 
-		ArrayList<String> recursiveGanas = new ArrayList<>(); 
-		ArrayList<ArrayList<String>> recursiveMagic = new ArrayList<>();
+		ArrayList<String> recursiveTemp = new ArrayList<>(); 
+		ArrayList<ArrayList<String>> recursiveFinal = new ArrayList<>();
 		ArrayList<String> operadoresAritmeticos = new ArrayList<>();
 		Boolean logic = false, aritmetico = false; 
 		String resultado = "";
@@ -135,17 +176,17 @@ public class Declaracion {
 
 		
 		funtionality = (ArrayList)functions.get(functionName).clone(); 
-		variablesM = (ArrayList)variables.get(functionName).clone();
+		savedVariables = (ArrayList)variables.get(functionName).clone();
 
 		for(int i = 0; i < function.get(0).size(); i++){
 			replaceVariables.add(function.get(0).get(i).replace(" ", ""));
 		}
 
 		
-		if(replaceVariables.size() == variablesM.size()){
+		if(replaceVariables.size() == savedVariables.size()){
 			for(int i = 0; i < funtionality.size(); i++){ 
 				for(int j = 0; j < replaceVariables.size(); j++){ 
-					if(funtionality.get(i).equalsIgnoreCase(variablesM.get(j))){
+					if(funtionality.get(i).equalsIgnoreCase(savedVariables.get(j))){
 						funtionality.set(i, replaceVariables.get(j));
 					}
 
@@ -155,9 +196,12 @@ public class Declaracion {
 
 				}
 			}
+		}else{
+			System.err.print("Fallo en: " + functionName + " \n cantidad de parametros erronea");
+			return resultado;
 		}
 			if(logic){
-				funtionality = predicateCommunication(functionName, replaceVariables);				
+				funtionality = functionRunning(functionName, replaceVariables);				
 				if(funtionality.contains(functionName) || funtionality.contains(functionName.toLowerCase())){
 					for(int i = 0; i < funtionality.size(); i++){						
 						if(funtionality.get(i).equalsIgnoreCase(functionName)){
@@ -174,15 +218,15 @@ public class Declaracion {
 					}
 
 					for(int i = 0; i < recursiveContainer.size(); i++){
-						recursiveGanas.add("(");
-						recursiveGanas.add(functionName);
-						recursiveGanas.add(recursiveContainer.remove(0)); 
-						recursiveGanas.add(")");
+						recursiveTemp.add("(");
+						recursiveTemp.add(functionName);
+						recursiveTemp.add(recursiveContainer.remove(0)); 
+						recursiveTemp.add(")");
 
-						recursiveMagic.add(recursiveGanas); 
-						recursiveContainer.add(runFuncion(recursiveMagic));
-						recursiveGanas.clear();	
-						recursiveMagic.clear();
+						recursiveFinal.add(recursiveTemp); 
+						recursiveContainer.add(runFuncion(recursiveFinal));
+						recursiveTemp.clear();	
+						recursiveFinal.clear();
 					}
 
 					for(int j = funtionality.size()-1; j > -1; j--) {
@@ -190,7 +234,7 @@ public class Declaracion {
 					}
 					recursiveContainer.add(0, "(");
 					recursiveContainer.add(")");
-					recursiveMagic.add(recursiveContainer);
+					recursiveFinal.add(recursiveContainer);
 
 				
 					resultado = String.valueOf(calc.calculateArithmetic(recursiveContainer));
@@ -221,7 +265,14 @@ public class Declaracion {
 			return resultado; 
 		
 	}
-    private ArrayList<String> convertArrayList(Integer cant){
+    
+	/** 
+	 * @param cant
+	 * @return ArrayList<String>
+	 * 
+	 * Convierte de Arraydeque a Arraylist
+	 */
+	private ArrayList<String> convertArrayList(Integer cant){
 		ArrayList<String> aux = new ArrayList<>();
 
 		for(int i = 0; i < cant; i++){
@@ -232,7 +283,15 @@ public class Declaracion {
 	} 
 
     
-    private ArrayList<String> predicateCommunication(String functionName, ArrayList<String> replaceVariables){
+    
+	/** 
+	 * @param functionName
+	 * @param replaceVariables
+	 * @return ArrayList<String>
+	 * 
+	 * Si la funcion utiliza cond, se envia a funciones
+	 */
+	private ArrayList<String> functionRunning(String functionName, ArrayList<String> replaceVariables){
 		Funciones fun = new Funciones();
 		Parser parser = new Parser();
 		ArrayList<ArrayList<String>> communicate = new ArrayList<>();
@@ -243,7 +302,6 @@ public class Declaracion {
 		String response, temporal;
 		String entry = "";
 
-		// Separando el string
 		communicate = (ArrayList)this.oldFunction.get(functionName).clone();
 		entry = String.join(" ", communicate.get(0));
 		communicate = parser.convertirArray(entry);
@@ -284,7 +342,14 @@ public class Declaracion {
 		return aux;
 	}
     
-    public Boolean hasKey(ArrayList<ArrayList<String>> function){
+    
+	/** 
+	 * @param function
+	 * @return Boolean
+	 * 
+	 * Verifica si la funcion ingresada por el usuario existe
+	 */
+	public Boolean hasKey(ArrayList<ArrayList<String>> function){
     	
     	if(functions.size() > 0) {
     		return functions.containsKey(function.get(0).get(1).toUpperCase()); 
