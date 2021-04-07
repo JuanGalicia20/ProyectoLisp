@@ -1,9 +1,0 @@
-(defun fibonacci (n &optional (a 0) (b 1))
-  (if (zerop n)
-      nil
-      (cons a (fibonacci (1- n) b (+ a b)))))
-
-(defun factorial (n)
-  (if (= n 1)
-      1
-      (* n (factorial (- n 1)))))
