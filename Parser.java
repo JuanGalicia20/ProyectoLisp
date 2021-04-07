@@ -38,7 +38,6 @@ public class Parser {
 		
 		lispEntry = getStack(codigo);
 		
-		System.out.println(lispEntry);
 		
 		
 		//verifica si existe primeramente una funcion
@@ -322,7 +321,6 @@ public class Parser {
 		
 		Collections.reverse(invertido); //Se revierte el orden
 		agregar(invertido); //Se agrega lo ultimo dejado en invertidos
-		System.out.print(lispEntry);
 		return lispEntry;
 		
 	}
