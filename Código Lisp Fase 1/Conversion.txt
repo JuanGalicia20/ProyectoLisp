@@ -1,0 +1,7 @@
+; SLIME 2.26.1
+CL-USER> (defun conver (fahren)
+  (* (- fahren 32) (float (/ 5 9))))
+CONVER
+CL-USER> (conver 50)
+10.0
+CL-USER> 
