@@ -23,7 +23,7 @@ public class main{
         
         
         do{
-            System.out.println("Ingrese el codigo lisp: ");
+            System.out.println("Bienvenido al intérprete LISP \n\n **El programa solo admite una instrucción por linea.** \n Por favor, ingrese el codigo lisp: ");
             String text = leerIngreso(scan);
             if (text.equals("")) {
                 seguir = false;
@@ -35,10 +35,15 @@ public class main{
                     System.out.println("\n---------------------------------------------------\n");
                     try{
                         ArrayList<String> texto = parse.funcion(text);
-                        for(String t : texto)
-                        {
-                            System.out.println( "Resultado Final: " + String.valueOf(t));
+                       
+                        if(texto.size() > 1){
+                            System.out.println( "Resultado Final: " +String.valueOf(texto.get(texto.size()-1)));
                         }
+                        else{
+                            System.out.println( "Resultado Final: " + String.valueOf(texto.get(0)));
+                        }
+                            
+                        
                         System.out.println("\n---------------------------------------------------");
                     }catch(Exception e){
                         System.out.println(e);

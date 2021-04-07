@@ -349,14 +349,29 @@ public class Declaracion {
 	 * 
 	 * Verifica si la funcion ingresada por el usuario existe
 	 */
-	public Boolean hasKey(ArrayList<ArrayList<String>> function){
-    	
+	public int hasKey(ArrayList<ArrayList<String>> function){
+    	int numFun=0;
     	if(functions.size() > 0) {
-    		return functions.containsKey(function.get(0).get(1).toUpperCase()); 
+			for(int i = 0; i < function.size(); i++) {
+                for(int j =0; j<function.get(i).size();j++)
+                {
+					if(functions.containsKey(function.get(i).get(j).toUpperCase()))
+					{
+						numFun++;
+					}
+				}
+			}
+			return numFun;
+    		 
     	}
     	else {
-    		return false;
+    		return numFun;
     	}
+	}
+
+
+	public Map<String, ArrayList<String>> getFunctions() {
+		return functions;
 	}
 
 }

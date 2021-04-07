@@ -16,7 +16,7 @@ public class Parser {
 	static  ArrayList<ArrayList<String>>lispEntry = new ArrayList<ArrayList<String>>();
 	static Funciones run = new Funciones();
 	private ArrayList<String> list = new ArrayList<String>();
-	private String[] palabrasClave = { "defun", "setq","atom","cond","equal","+","-","/","*","list","quote","<",">"};
+	private String[] palabrasClave = { "defun", "setq","atom","cond","equal","+","-","/","*","list","quote","<",">", "'"};
 	Funciones fun = new Funciones();
 	Arithmetic ops = new Arithmetic();
 	Declaracion dec = new Declaracion();
@@ -41,29 +41,46 @@ public class Parser {
 		System.out.println(lispEntry);
 		
 		
-		
-		if (dec.hasKey(lispEntry)) {
-			finalArray.add(dec.runFuncion(lispEntry));
+		//verifica si existe primeramente una funcion
+		if (dec.hasKey(lispEntry)==1) {
+			if(verif.VerifVariable(lispEntry, fun.getListadoVariables()))
+			{
+				lispEntry=fun.BuscarVar(lispEntry);
+				finalArray.add(dec.runFuncion(lispEntry));
+				return finalArray;
+			}
+			else
+			{
+				finalArray.add(dec.runFuncion(lispEntry));
+				return finalArray;
+			}
+		}
+
+		//si existe mas de una funcion se utiliza el metodo Multifun
+		else if(dec.hasKey(lispEntry)>1)
+		{
+			finalArray.add(fun.MultiFun(lispEntry, dec));
 			return finalArray;
 		}
+		//si no -> se procede a verificar que instruccion se busca o si existen variables a intercambiar
 		else {
 			if(verif.VerifVariable(lispEntry, fun.getListadoVariables()))
 			{
-				//finalArray.add(fun.BuscarVar(lispEntry));
 				lispEntry=fun.BuscarVar(lispEntry);
 				finalArray.add(lispEntry.toString());
 			}
 			else if(verif.VerifList(lispEntry))
 			{
-				finalArray.add(fun.ListValue((lispEntry).get(0)));
+				finalArray = fun.ListValue((lispEntry).get(0));
 			}
 			
 			for(int i=0; i<lispEntry.size();i++){
 				fixedArray = lispEntry.get(i);
 				for(int k = 0; k < fixedArray.size(); k++){
 					for(int j=0; j < palabrasClave.length;j++){
-						if(fixedArray.get(k).contains(palabrasClave[j]))
+						if(fixedArray.get(k).equals(palabrasClave[j]) || fixedArray.get(k).equals(" "+ palabrasClave[j]) )
 						{
+							//casos de palabras clave
 							switch (j)
 							{
 								case 0:
@@ -105,11 +122,12 @@ public class Parser {
 									finalArray = fun.listLisp(lispEntry);
 									break;
 								case 10:
-									finalArray.add(fun.quote(lispEntry));
-									i = lispEntry.size();
-									k = fixedArray.size();
-									j = palabrasClave.length;
-									break;
+									case 13:
+										finalArray.add(fun.quote(lispEntry));
+										i = lispEntry.size();
+										k = fixedArray.size();
+										j = palabrasClave.length;
+										break;
 								case 11:
 									case 12:
 										finalArray.add(fun.mayorMenor(lispEntry));

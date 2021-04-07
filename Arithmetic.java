@@ -34,6 +34,8 @@ public class Arithmetic {
             int openParentheses = 0;
             int closedParentheses = 0;
 
+            //se ordenan las operaciones por parentesis para poder operar
+            //por ejemplo (+ 1 (* 3 (/ 8 4)))
             for(int i = 0; i < line.size(); i ++) {
                 String currentWord = line.get(i);
                 if(currentWord.equals("(")) {
